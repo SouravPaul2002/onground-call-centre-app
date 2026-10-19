@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RECENT_CALLS_DATA } from '../mock/data';
 import type { RecentCallRecord } from '../types';
 import type { CallLogItem } from '../hooks/useCall';
+import { formatDuration } from '../utils/formatters';
 
 interface RecentCallsProps {
   webrtcLogs?: CallLogItem[];
@@ -170,11 +171,7 @@ export const RecentCalls: React.FC<RecentCallsProps> = ({ webrtcLogs = [] }) => 
     if (audioTimerRef.current) clearInterval(audioTimerRef.current);
   };
 
-  const formatTimer = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-  };
+  const formatTimer = formatDuration;
 
   // Generate SOP results based on call index
   const getCallSopResults = (idx: number): SopResult[] => {

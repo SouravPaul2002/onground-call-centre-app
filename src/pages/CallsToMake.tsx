@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PLAN_OUTGOING_LEADS } from '../mock/data';
 import type { PlanOutgoingLead } from '../types';
+import { formatDuration } from '../utils/formatters';
 import {
   Phone,
   PhoneCall,
@@ -110,11 +111,7 @@ export const CallsToMake: React.FC<CallsToMakeProps> = ({ onStartWebRtcCall }) =
     return () => clearInterval(transcriptTimer);
   }, [activeCallLead]);
 
-  const formatTimer = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-  };
+  const formatTimer = formatDuration;
 
   const handleStartCall = (lead: PlanOutgoingLead) => {
     setActiveCallLead(lead);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MISSED_CALLS_DATA } from '../mock/data';
 import type { MissedCall } from '../types';
+import { formatDuration } from '../utils/formatters';
 import {
   PhoneOff,
   Phone,
@@ -104,11 +105,7 @@ export const IncomingCalls: React.FC<IncomingCallsProps> = ({ onStartWebRtcCall 
     return () => clearInterval(transcriptTimer);
   }, [activeCallCaller]);
 
-  const formatTimer = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-  };
+  const formatTimer = formatDuration;
 
   const handleStartCallback = (caller: MissedCall) => {
     setActiveCallCaller(caller);
