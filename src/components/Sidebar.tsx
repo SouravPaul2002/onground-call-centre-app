@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onSelectPage }) =
           className={`nav-item ${currentPage === 'dashboard' ? 'active' : ''}`}
           onClick={() => onSelectPage('dashboard')}
         >
-          <span className="nav-icon-box">
+          <span className="nav-icon-box icon-dash">
             <LayoutDashboard size={16} />
           </span>
           <span>Dashboard</span>
@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onSelectPage }) =
         {/* Plan Header (Non-collapsible) */}
         <div className={`nav-item nav-item-plan-header ${isPlanActive ? 'active' : ''}`}>
           <div className="nav-item-left">
-            <span className="nav-icon-box">
+            <span className="nav-icon-box icon-plan">
               <Phone size={16} />
             </span>
             <span>Plan</span>
@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onSelectPage }) =
           className={`nav-item ${currentPage === 'calendar' ? 'active' : ''}`}
           onClick={() => onSelectPage('calendar')}
         >
-          <span className="nav-icon-box">
+          <span className="nav-icon-box icon-cal">
             <Calendar size={16} />
           </span>
           <span>Calendar</span>
@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onSelectPage }) =
           }`}
           onClick={() => onSelectPage('pulse')}
         >
-          <span className="nav-icon-box">
+          <span className="nav-icon-box icon-pulse">
             <MessagesSquare size={16} />
           </span>
           <span>Pulse</span>
