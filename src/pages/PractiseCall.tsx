@@ -338,28 +338,6 @@ export const PractiseCall: React.FC<PractiseCallProps> = ({ call }) => {
           </div>
         )}
       </div>
-
-      {/* Simple Testing Guide */}
-      <div
-        style={{
-          background: '#f9fafb',
-          border: '1px dashed #d1d5db',
-          borderRadius: 12,
-          padding: 16,
-          fontSize: 13,
-          color: '#555',
-        }}
-      >
-        <div style={{ fontWeight: 700, color: '#111', marginBottom: 6 }}>
-          Quick 2-Tab Testing Instructions:
-        </div>
-        <ol style={{ margin: 0, paddingLeft: 18, lineHeight: 1.6 }}>
-          <li>Open <code>http://localhost:5173</code> in your current window and in an Incognito window.</li>
-          <li>In Tab 1, go to Practise a Call and copy your Peer ID.</li>
-          <li>In Tab 2, paste that ID into "Call Another User" and click <strong>Call</strong>.</li>
-          <li>Allow microphone access on both tabs, and you'll hear audio communicating between them.</li>
-        </ol>
-      </div>
     </div>
   );
 };
