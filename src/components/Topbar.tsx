@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Check, UserCheck, Settings, LogOut } from 'lucide-react';
+import { Bell, UserCheck, Settings, LogOut } from 'lucide-react';
 
 interface TopbarProps {
   score?: number;
@@ -17,7 +17,6 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenScoreDetail,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [agentStatus, setAgentStatus] = useState<'On Queue' | 'On Break' | 'Offline'>('On Queue');
 
   return (
     <header className="app-topbar">

@@ -12,7 +12,6 @@ import {
   Headset,
   PhoneCall,
   Users,
-  FileText,
   CheckSquare,
 } from 'lucide-react';
 import type { PageId } from '../types';
@@ -27,7 +26,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onOpenLeadModal,
 }) => {
   const [timeRange, setTimeRange] = useState('This Week');
-  const [currentStatus, setCurrentStatus] = useState(AGENT_PROFILE.status);
+  const [currentStatus, setCurrentStatus] = useState<'On Queue' | 'On Break' | 'Offline'>(AGENT_PROFILE.status as any);
   const [dateRangeOpen, setDateRangeOpen] = useState(false);
 
   const toggleStatus = () => {
@@ -470,7 +469,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {/* Who's Waiting Cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {WHO_IS_WAITING.map((caller) => {
-              const isHi = caller.waitLevel === 'hi' || caller.waitTime.includes('1m 20s');
+              const isHi = caller.priority === 'high' || caller.waitTime.includes('1m 20s');
               const levelColor = isHi ? '#e24b4a' : '#c8860a';
               const levelBg = isHi ? '#fdecec' : '#fff3d6';
 

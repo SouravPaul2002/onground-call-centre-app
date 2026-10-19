@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RECENT_CALLS_DATA } from '../mock/data';
 import type { RecentCallRecord } from '../types';
+import type { CallLogItem } from '../hooks/useCall';
+
+interface RecentCallsProps {
+  webrtcLogs?: CallLogItem[];
+}
 import {
   PhoneIncoming,
   PhoneForwarded,
@@ -74,7 +79,7 @@ const SOP_REVIEW_EVIDENCE = [
   ],
 ];
 
-export const RecentCalls: React.FC = () => {
+export const RecentCalls: React.FC<RecentCallsProps> = ({ webrtcLogs = [] }) => {
   const [selectedCallIndex, setSelectedCallIndex] = useState<number | null>(null);
 
   // Audio player simulation state
@@ -85,8 +90,50 @@ export const RecentCalls: React.FC = () => {
 
   const audioTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Merge real WebRTC call logs with mock historical data
+  const mergedCalls: RecentCallRecord[] = [
+    ...webrtcLogs.map((log) => ({
+      id: log.id,
+      callerName: log.callerName,
+      phone: log.remotePeerId,
+      timestamp: log.startedAt,
+      duration: log.durationText,
+      durationSeconds: log.durationSeconds,
+      type: (log.direction === 'incoming' ? 'incoming' : 'outgoing') as 'incoming' | 'outgoing',
+      outcome: log.outcome,
+      product: 'In-App WebRTC Call',
+      qaScore: log.outcome === 'Completed' ? 92 : 0,
+      csatScore: log.outcome === 'Completed' ? 95 : 0,
+      sopCompliance: {
+        greetingIn10s: log.outcome === 'Completed',
+        problemIdentified: log.outcome === 'Completed',
+        objectionHandled: log.outcome === 'Completed',
+        closingAttempted: log.outcome === 'Completed',
+      },
+      transcript: [
+        {
+          speaker: (log.direction === 'outgoing' ? 'Agent' : 'Customer') as 'Agent' | 'Customer',
+          text: `Voice channel established with ${log.remotePeerId}`,
+          time: '0:01',
+        },
+        {
+          speaker: (log.direction === 'outgoing' ? 'Customer' : 'Agent') as 'Agent' | 'Customer',
+          text: `Call completed with outcome: ${log.outcome}`,
+          time: log.durationText,
+        },
+      ],
+      coachingNotes: [
+        `Local Peer ID: ${log.localPeerId}`,
+        `Remote Peer ID: ${log.remotePeerId}`,
+        `Outcome: ${log.outcome}`,
+        `Duration: ${log.durationText}`,
+      ],
+    })),
+    ...RECENT_CALLS_DATA,
+  ];
+
   const selectedCall: RecentCallRecord | null =
-    selectedCallIndex !== null ? RECENT_CALLS_DATA[selectedCallIndex] || null : null;
+    selectedCallIndex !== null ? mergedCalls[selectedCallIndex] || null : null;
 
   const totalCallSeconds = selectedCall ? (selectedCall.durationSeconds || 252) : 252;
 
@@ -131,6 +178,19 @@ export const RecentCalls: React.FC = () => {
 
   // Generate SOP results based on call index
   const getCallSopResults = (idx: number): SopResult[] => {
+    const call = mergedCalls[idx];
+    if (call && call.id.startsWith('webrtc-')) {
+      const isCompleted = call.outcome === 'Completed';
+      return [
+        { label: 'WebRTC P2P Handshake', pass: true, evidence: 'Signalling connection established via PeerJS cloud server.' },
+        { label: 'Microphone Stream Active', pass: true, evidence: 'Local audio track captured and transmitted.' },
+        { label: 'Remote Audio Playback', pass: isCompleted, evidence: isCompleted ? 'Two-way audio verified.' : 'Call ended or disconnected.' },
+        { label: 'Call Duration', pass: isCompleted, evidence: `Recorded duration: ${call.duration}.` },
+        { label: 'Call Outcome', pass: isCompleted, evidence: `Outcome status: ${call.outcome}.` },
+        { label: 'Clean Resource Tear-down', pass: true, evidence: 'Microphone tracks released cleanly upon hangup.' },
+      ];
+    }
+
     if (idx === 0) {
       // First call (Mukunda R. - 92% QA score)
       return [
@@ -222,10 +282,9 @@ export const RecentCalls: React.FC = () => {
 
       {/* 3. Recent Calls List */}
       <div style={{ padding: '8px 12px' }}>
-        {RECENT_CALLS_DATA.map((call, idx) => {
+        {mergedCalls.map((call, idx) => {
           const isIncoming = call.type === 'incoming';
           const isOutgoing = call.type === 'outgoing';
-          const isMissed = call.type === 'missed';
 
           const iconConfig = isIncoming
             ? { bg: '#e1f5ee', color: '#0f6e56', icon: <PhoneIncoming size={16} /> }

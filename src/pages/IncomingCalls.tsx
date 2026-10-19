@@ -19,8 +19,16 @@ import {
   PhoneIncoming,
 } from 'lucide-react';
 
-export const IncomingCalls: React.FC = () => {
+interface IncomingCallsProps {
+  onStartWebRtcCall?: (remotePeerId: string, caller: { name: string; phone: string }) => void;
+}
+
+export const IncomingCalls: React.FC<IncomingCallsProps> = ({ onStartWebRtcCall }) => {
   const [missedCalls, setMissedCalls] = useState<MissedCall[]>(MISSED_CALLS_DATA);
+
+  // WebRTC callback prompt state
+  const [webrtcPromptCaller, setWebrtcPromptCaller] = useState<MissedCall | null>(null);
+  const [targetPeerId, setTargetPeerId] = useState('');
 
   // Active call state
   const [activeCallCaller, setActiveCallCaller] = useState<MissedCall | null>(null);
@@ -752,7 +760,14 @@ export const IncomingCalls: React.FC = () => {
                       {valueLabel}
                     </div>
                     <button
-                      onClick={() => handleStartCallback(call)}
+                      onClick={() => {
+                        if (onStartWebRtcCall) {
+                          setWebrtcPromptCaller(call);
+                          setTargetPeerId('');
+                        } else {
+                          handleStartCallback(call);
+                        }
+                      }}
                       style={{
                         marginTop: 4,
                         fontSize: 12.5,
@@ -955,6 +970,180 @@ export const IncomingCalls: React.FC = () => {
                   <span>Save to CRM</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* WebRTC Callback Option Prompt Modal */}
+      {webrtcPromptCaller && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setWebrtcPromptCaller(null);
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              padding: '20px 22px',
+              maxWidth: 440,
+              width: '100%',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+              position: 'relative',
+              animation: 'modalRise 0.2s ease',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 10,
+                    background: '#e1f5ee',
+                    color: '#0f6e56',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <PhoneCall size={18} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#1a1a1a' }}>
+                    Call back {webrtcPromptCaller.callerName}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#8e8e93' }}>
+                    {webrtcPromptCaller.phone} · {webrtcPromptCaller.statusTag}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setWebrtcPromptCaller(null)}
+                style={{
+                  background: '#f2f2f7',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 28,
+                  height: 28,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#6b6b74',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 12,
+                padding: '12px 14px',
+                fontSize: 12.5,
+                color: '#475569',
+                lineHeight: 1.45,
+                marginBottom: 14,
+              }}
+            >
+              💡 <b>In-App WebRTC Callback:</b> Direct browser-to-browser voice calling requires the customer's Peer ID. (Ordinary cellular callbacks require an external telephony gateway).
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>
+                Customer's Peer ID:
+              </label>
+              <input
+                type="text"
+                value={targetPeerId}
+                onChange={(e) => setTargetPeerId(e.target.value)}
+                placeholder="Paste Peer ID from customer's browser..."
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  borderRadius: 10,
+                  border: '1.5px solid #d1d5db',
+                  fontSize: 13.5,
+                  fontFamily: 'monospace',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button
+                onClick={() => {
+                  if (onStartWebRtcCall && targetPeerId.trim()) {
+                    onStartWebRtcCall(targetPeerId.trim(), {
+                      name: webrtcPromptCaller.callerName,
+                      phone: webrtcPromptCaller.phone,
+                    });
+                    setWebrtcPromptCaller(null);
+                  }
+                }}
+                disabled={!targetPeerId.trim()}
+                style={{
+                  width: '100%',
+                  padding: '11px',
+                  borderRadius: 10,
+                  border: 'none',
+                  background: targetPeerId.trim() ? '#0f6e56' : '#9ca3af',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: targetPeerId.trim() ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <Phone size={16} />
+                <span>Start Real WebRTC Call</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const c = webrtcPromptCaller;
+                  setWebrtcPromptCaller(null);
+                  handleStartCallback(c);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: 10,
+                  border: '1px solid #e5e5ea',
+                  background: '#fafafa',
+                  color: '#374151',
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <Sparkles size={15} color="#7c3aed" />
+                <span>Simulate Practice Callback</span>
+              </button>
             </div>
           </div>
         </div>

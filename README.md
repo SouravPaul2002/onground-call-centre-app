@@ -131,20 +131,83 @@ npm run build
 
 ---
 
-## 📞 Calling Feature Implementation ("REQUIRED: BUILD A WORKING PRODUCT")
+---
 
-To fulfill the explicit mandate on Page 1 of Annexure-II, this app implements a functional in-app calling experience:
-1. **Audio Synthesis & Ringtones**: Uses the native browser **Web Audio API** (`OscillatorNode` & `GainNode`) to produce realistic connection beeps without external MP3 files.
-2. **AI Voice Synthesis**: Leverages the browser's **Web Speech API** (`window.speechSynthesis`) so the customer actually speaks aloud during the call.
-3. **Real-time Audio Waveform**: Animated dynamic waveform bars reflecting active voice activity.
-4. **Live Transcript Streaming**: Speech transcript automatically feeds in real-time as the customer and agent converse.
-5. **Interactive Coached Responses**: Quick-pitch response buttons allowing the agent to handle EMI objections, pitch the 100-night trial, and dispatch quote links.
-6. **Call Controls**: Mute toggle, Hold/Resume, and End Call with duration counter.
-7. **Automatic Call Logging**: When a call concludes, it is dynamically prepended to **Recent Calls** with QA evaluation and coaching insights.
+## 🎙️ PeerJS + WebRTC In-App Voice Calling
+
+This application includes a **real, fully working browser-to-browser voice calling feature** built with **PeerJS** and **WebRTC**. Two users (or two tabs/browser windows) can communicate in real time with two-way microphone audio and functional in-call controls.
+
+### 1. How It Works
+- **PeerJS Cloud Signalling**: When the app opens, PeerJS connects to the free PeerJS public cloud signalling server (`0.peerjs.com`) to exchange WebRTC session descriptions (SDP offers/answers) and ICE candidates.
+- **Direct P2P WebRTC Audio**: Once signalling completes, audio streams directly peer-to-peer (P2P) between the two browsers using the browser's native `RTCPeerConnection` and `MediaDevices.getUserMedia()` API.
+- **No Backend Server Required**: All signalling is handled by the free PeerJS service; no local Express/Socket.IO backend or database is needed.
+
+---
+
+### 2. How to Test Real Calls Between Two Browser Sessions
+
+To test two-way voice calling on a single computer:
+
+1. **Start the Dev Server**:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:5173`.
+
+2. **Session 1 (Caller or Receiver)**:
+   - In your main browser window, navigate to **Plan** → **Practise a call** in the sidebar.
+   - Look at the **Your Peer Identity** card. You will see an automatically generated Peer ID (e.g., `8d2f14ac-5e20-4a88-8123-3b1a29f8ce22`).
+   - Click the **Copy ID** button.
+
+3. **Session 2 (The Other Participant)**:
+   - Open a **second browser window** (e.g., Google Chrome Incognito, Microsoft Edge, or Firefox) and visit `http://localhost:5173`.
+   - Navigate to **Plan** → **Practise a call**. This second window will have its own unique Peer ID.
+
+4. **Initiating the Call**:
+   - In Session 2, paste the Peer ID from Session 1 into the **Remote Peer ID** input box.
+   - Click **Call Peer**.
+   - Your browser will request **Microphone Permission** (`Allow`).
+
+5. **Accepting the Call**:
+   - In Session 1, an **Incoming WebRTC Audio Call** modal will ring with the caller's Peer ID.
+   - Click **Accept Call** and grant microphone access if prompted.
+
+6. **In-Call Testing & Controls**:
+   - **Two-way Audio**: Speak into your microphone; audio plays through the other browser window's speaker/headphones.
+   - **Mute / Unmute**: Clicking Mute disables the local audio track (`track.enabled = false`); the other party cannot hear you until you unmute.
+   - **Hold / Resume**: Pauses sending audio and updates the call status to "On Hold".
+   - **Floating Call Bar**: Minimize the active call modal and navigate between pages (`Dashboard`, `Calendar`, `Pulse`); the call continues running uninterrupted with duration tracking.
+   - **End Call**: Hanging up closes the WebRTC media connection, releases all microphone tracks, stops the duration timer, and records the call into **Recent Calls**.
+
+---
+
+### 3. Microphone Permissions and HTTPS Requirements
+
+- **Localhost Exception**: WebRTC `getUserMedia()` operates over `http://localhost` without requiring an SSL certificate because browsers treat `localhost` as a secure origin.
+- **Production / Network Hosting**: If hosting on a local network IP (e.g., `http://192.168.x.x:5173`) or deploying to the web, browsers **strictly require HTTPS** to access the microphone.
+- **Audio Feedback**: When testing two browser windows on the same machine, use headphones or mute one tab to avoid acoustic feedback loops between your speaker and microphone.
+
+---
+
+### 4. Why This Calls Another Browser Rather Than a Mobile Number
+
+- **WebRTC is Browser-to-Browser**: WebRTC provides encrypted, real-time peer-to-peer audio and video transmission between web browsers.
+- **PSTN Telephony Gateway Required for Real Phone Numbers**: Cellular phones and landlines operate on the Public Switched Telephone Network (PSTN). Calling an ordinary mobile number (+91 98450...) requires a paid telecom carrier gateway (such as Twilio Programmable Voice, Exotel, or AWS Chime) and telecom SIP trunks.
+- For in-app agent-to-customer or agent-to-peer communications, WebRTC provides instant, zero-cost, high-fidelity browser voice calling.
+
+---
+
+### 5. Signalling & Network Limitations
+
+- **Free Public Signalling**: The app uses PeerJS's free community cloud server. It is ideal for demos, assignments, and testing. It does not provide enterprise SLAs.
+- **NAT / Firewall Traversal (STUN vs. TURN)**:
+  - The application includes public Google and Twilio STUN servers (`stun:stun.l.google.com:19302`) for direct P2P connection establishment across common residential and office NATs.
+  - Highly restrictive corporate symmetric NATs or enterprise firewalls may block direct UDP packets and require a TURN relay server (which is a paid bandwidth service not included in free setups).
+  - The application provides clear error notifications if a connection cannot be established or if a peer is unreachable.
 
 ---
 
 ## 🤖 AI Tools Used
 
 - **Google Antigravity IDE (Gemini 3.8 Flash High)**: Used for architecture planning, component scaffolding, design system implementation, and code generation.
-- **Web Speech API & Web Audio API**: Used for in-browser speech synthesis and audio simulation.
+
