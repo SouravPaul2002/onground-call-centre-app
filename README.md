@@ -1,213 +1,285 @@
 # On-Ground.ai Call Centre Web Application
 
-A reproduction and functional implementation of the **On-Ground.ai Call Centre Agent Application**, built for shift-long call centre agents handling walk-out recovery, telesales, coaching, and omnichannel follow-ups.
+A fully functional, high-fidelity implementation of the **On-Ground.ai Call Centre Agent Application**, built for shift-long call centre agents handling walk-out recovery, telesales, coaching, and omnichannel follow-ups.
 
----
-
-## 🛠️ Stack & Why
-
-- **React 19 & TypeScript**: Provides rock-solid type safety, component modularity, and smooth reactive state management for real-time shift workflows.
-- **Vite**: Ultra-fast build and development server with instant Hot Module Replacement (HMR).
-- **Lucide React**: Clean, minimalist vector iconography aligned with the dark modern theme.
-- **Recharts**: Responsive SVG charts for 7-day calls handled and CSAT trend analytics.
-- **Vanilla CSS (Design System)**: Bespoke styling and CSS custom properties providing exact fidelity to the reference mocks, responsive breakpoints, dark sidebar/topbar styling, and micro-interactions without heavy CSS framework bloat.
-- **Web Audio API & Web Speech API**: Implements the required interactive calling feature directly in browser runtime with simulated tones, audio waveform animation, and live voice synthesis.
+This project was built following the requirements outlined in **Annexure-II** for the **On-Ground.ai Engineering Hiring Shortlist**. It includes all mandatory screens, bonus interactions, and a **real, fully working browser-to-browser voice calling feature** powered by **PeerJS** and **WebRTC**.
 
 ---
 
 ## 🚀 How to Run Locally
 
 ### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm
 
-### Installation & Launch
+- **Node.js**: v18.0.0 or higher recommended
+
+- **npm**: v9.0.0 or higher
+
+- A modern web browser (Google Chrome, Microsoft Edge, Brave, or Firefox) with microphone access enabled.
+
+### 1. Installation & Launch
+
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd onground-call-centre
+# 1. Clone the repository
 
-# Install dependencies
+git clone https://github.com/SouravPaul2002/onground-call-centre-app.git
+cd onground-call-centre-app
+# 2. Install dependencies
+
 npm install
+# 3. Start development server
 
-# Start development server
 npm run dev
 ```
 
-Open your browser at `http://localhost:5173` to interact with the application.
+Open your browser and navigate to:
 
-### Build for Production
-```bash
-npm run build
 ```
+http://localhost:5173
+```
+
+### 2. Verify Production Build & Linting
+
+```bash
+# Type check and build bundle
+
+npm run build
+# Run linter
+
+npm run lint
+```
+
+Both `npm run build` and `npm run lint` compile cleanly with **0 errors**.
 
 ---
 
-## 📱 What is Done (All 8 Core Screens + Bonus Items)
+## 🛠️ Stack & Why
+
+| Technology | Why It Was Chosen |
+| :--- | :--- |
+| **React 19** | Industry-standard declarative UI library with fast component re-renders, clean hook composition, and native support for modern UI workflows. |
+| **TypeScript** | Strict type safety for complex call states, customer lead models, chat streams, and WebRTC media streams, preventing runtime errors. |
+| **Vite** | Lightning-fast development server with instant Hot Module Replacement (HMR) and optimized Rolldown/Rollup production bundling. |
+| **PeerJS & WebRTC** | Simplifies peer-to-peer WebRTC audio communication using PeerJS's free cloud signalling service (`0.peerjs.com`). Enables real browser-to-browser microphone and speaker communication without paid telephony APIs or custom backend infrastructure. |
+| **Recharts** | Lightweight, responsive SVG charting library used to render the 7-day calls volume bar chart and CSAT trend analytics on the Dashboard. |
+| **Lucide React** | Clean, consistent vector iconography matching the design theme of the reference mock. |
+| **Vanilla CSS** | Direct CSS and modular design tokens for pixel-accurate styling, custom animations (pulsing indicators, ringing modals), and dark sidebar/topbar themes without framework bloat. |
+
+---
+
+## 📱 What is Done (Implemented Features)
 
 ### 1. App Shell
-- **Sidebar**: Dark charcoal navigation with collapsible `Plan` menu (`Calls to make`, `Incoming`, `Recent`, `Practise a call`), `Calendar`, `Pulse`, and footer profile capsule for **Arvind Rajan** with real-time status indicator (`● On Queue`).
-- **Topbar**: On-Ground.ai capsule badge (`[OG] On-Ground.ai`), notification alert with unread badge, live score badge (`76 ★ #3`), and agent status dropdown (`On Queue`, `On Break`, `Offline`).
-- **Floating Demo Dock**: Fixed bottom demo controller (`DEMO | 📞 In-app call | 📞 Phone call | Practise call | 🔄 Reset`) available across all screens.
+
+- **Sidebar**: Dark navigation shell with active state indicators, collapsible `Plan` section (`Calls to make`, `Incoming`, `Recent`, `Practise a call`), `Calendar`, and `Pulse`. Includes the agent profile capsule for **Arvind Rajan** with a real-time status pill (`● On Queue`).
+
+- **Topbar**: On-Ground.ai brand pill (`[OG] On-Ground.ai`), notification alert with unread badge, live score badge (`76 ★ #3`), and agent status selector (`On Queue`, `On Break`, `Offline`).
 
 ### 2. Screen 1 — Dashboard
-- **Welcome & Agent Subtitle**: `Good afternoon Arvind Rajan`, `The Sleep Company · Call Centre`, status pill, and time-range selector (`This Week`).
+
+- **Welcome & Context**: `Good afternoon Arvind Rajan`, `The Sleep Company · Call Centre`, status pill, and time-range selector (`This Week`).
+
 - **4 Key KPI Cards**:
   - `OG SCORE™`: **76** (▲ 13, Top 10% on shift)
   - `AVG HANDLE TIME`: **4m 12s** (▼ 51s, Target < 5m)
   - `CSAT TODAY`: **94%** (▲ 2pt, Target 90%)
   - `IN QUEUE`: **2** (● live, Avg wait: 3m 13s)
+
 - **Left Column**:
-  - `MY PROGRESS · TODAY`: Dual dark metric blocks (`3 Leads Created`, `2 Leads Called`).
+  - `MY PROGRESS · TODAY`: Shift metrics (`3 Leads Created`, `2 Leads Called`).
   - `WHO'S WAITING`: Live waiting queue (`Priya Iyer`, `Suresh Nair`) with wait timers and direct dial triggers.
-  - `CALLS HANDLED · LAST 7 DAYS`: Interactive Recharts bar chart highlighting current shift volume.
-  - `CSAT TREND · LAST 7 DAYS`: 7-day CSAT progression (88% to 94%).
+  - `CALLS HANDLED · LAST 7 DAYS`: Interactive Recharts bar chart highlighting shift volume.
+  - `CSAT TREND · LAST 7 DAYS`: 7-day trend chart showing progression from 88% to 94%.
+
 - **Right Column**:
-  - `My earnings this month`: **₹5,200** with **₹1,700** from coached moves and progress bar towards ₹6,000.
-  - `My Tasks (3)`: Interactive checklist (`2 callbacks`, `2 hot leads`, `1 outcome to log`). Clicking any task opens the **Leads Modal**.
+  - `My earnings this month`: **₹5,200** with **₹1,700** from coached moves and animated progress bar towards ₹6,000.
+  - `My Tasks (3)`: Interactive task checklist (`2 callbacks`, `2 hot leads`, `1 outcome to log`). Clicking any task opens the **Leads Modal**.
 
 ### 3. Screen 2 — Calls to Make (Plan View)
-- Leads ranked by lead attractiveness score:
+
+- Customer leads ranked by lead attractiveness score:
   - **Ritu S.** (Score 96, Smart Luxe Mattress · ₹13,280)
   - **Mukunda** (Score 90, Ortho GRID · ₹8,490)
   - **Faizan A.** (Score 88, Elev8 Smart Bed · ₹24,000)
-- Expandable drawer on each lead revealing showroom visit context, contact number, and direct dial buttons.
-- Next/Previous page pagination dock (`Page 1 of 3`).
+
+- Expandable accordion rows revealing showroom visit history, CRM notes, contact details, and direct call action buttons.
+
+- Pagination controls (`Page 1 of 3`).
+
+- Integrated WebRTC prompt dialog allowing direct in-app audio calling via Peer ID alongside simulated practice calls.
 
 ### 4. Screen 3 — Incoming (Plan View)
+
 - Summary counters: **5 Missed Today** with **₹81,860 Expected Value at Stake**.
-- Ranked missed calls table with caller names, CRM/store visit context, and expected deal sizes.
-- Instant `📞 Call back` button on every row that launches the working calling feature.
+
+- Ranked missed calls table with caller names, CRM store visit context, and expected deal sizes.
+
+- Instant `📞 Call back` button on every row that launches either real WebRTC browser calling or simulated practice calling.
 
 ### 5. Screen 4 — Recent (Plan View)
-- Comprehensive recent calls log with call type icons (incoming, outgoing, missed), duration timestamps, and QA score badges.
-- **Tap a Call to Review**: Clicking any row opens the **Call SOP Review Modal** complete with:
-  - QA Adherence score (`92 / 100`) and Predicted CSAT (`★ 5.0 / 5.0`).
-  - Audio playback scrubber simulation.
-  - SOP protocol checklist (`Greeting in first 10s`, `Problem identified`, `Value proposition`, `CTA sent`).
-  - ASM AI Coach feedback and synchronized call transcript.
+
+- Comprehensive recent calls log with call direction icons (incoming, outgoing, missed), duration timestamps, and QA score badges.
+
+- **Real WebRTC Call History**: Real browser-to-browser calls made during the session are automatically prepended at the top of the list with accurate durations, timestamps, and outcome badges (`Completed`, `Declined`, `Failed`).
+
+- **Tap a Call to Review**: Clicking any row opens the **Call SOP Review Modal** with:
+  - QA Adherence score (`92%`) and score progress bar.
+  - Interactive audio scrubber simulation with play/pause and 1x / 1.5x / 2x speed controls.
+  - SOP compliance checklist (`Opening & Intent Confirm`, `Needs Discovery`, `Product Pitch`, `EMI / Financing`, `Warranty`, `Closing`).
+  - Call coaching notes, evidence quotes, and full call transcript.
 
 ### 6. Screen 5 — Calendar
-- Mirrored mailbox calendar banner with notification notice.
-- Interactive month grid for **October 2026** with weekday headers, today button, and event indicator dots on scheduled dates.
-- Active date selector (`Oct 9` selected) showing daily schedule:
+
+- Month grid for **October 2026** with weekday headers, today button, and event indicator dots on scheduled dates.
+
+- Active date selector (`Oct 9` selected) showing daily agenda items:
   - 11:00 AM: Store Visit & Experience Tour (Mukunda R.)
   - 02:30 PM: Weekly 1:1 Coaching with Sunita Rao (Greeting SOP review)
   - 04:30 PM: Priority Callback (Priya Iyer - Billing dispute)
 
 ### 7. Screen 6 — Pulse Home
-- Header with store location (`The Sleep Company · Koramangala`) and search bar for AvaniBot.
-- **AvaniBot Hero Banner**: Dark gradient card with `ALWAYS ON` status and interactive buttons:
-  - `📋 Daily Brief`: Opens shift priorities modal and action checklist.
-  - `💬 Ask a question`: Interactive Q&A dialog with AvaniBot.
+
+- Store location header (`The Sleep Company · Koramangala`) with AvaniBot search bar UI.
+
+- **AvaniBot Hero Banner**: Dark card with `ALWAYS ON` status, `Daily Brief`, and `Ask a question` triggers.
+
 - **Custom Agents Directory**:
   - Role Agents: `# callcentre-agent`
   - Task Agents with live metric tracking: `# cross-sell-agent` (Attach rate 24%), `# sop-agent` (SOP adherence 81%), `# lead-conversion-agent`, `# capture-agent` (Coverage 78%).
   - General: `# customer-discussions` (Relayed via WhatsApp Business).
-- **Kudos Card**: Real-time feedback recognition banner (`12 ALL →`).
+
+- **Kudos Card**: Team feedback recognition banner (`12 ALL →`).
 
 ### 8. Screen 7 — Pulse Channel Chat (`#callcentre-team`)
-- Channel header with back navigation button.
+
+- Channel header with back button to Pulse Home.
+
 - **Pinned "Needs your input" Card**:
   - Title: `Confirm the 4:30pm callback (Priya Iyer · likely billing dispute)`.
   - Action buttons: `Confirmed` and `Reschedule` (updates active state and posts notification into chat).
   - Quick reply text input with `Send` button.
-- **Live Chat Stream**:
-  - Structured manager messages with badges (`👥 STAKEHOLDERS`, `📋 ISSUE DEFINITION`, `💡 SUGGESTED RESOLUTION`).
-  - Right-aligned agent messages with timestamps.
-  - Interactive bottom chat input supporting message sending and auto-replies.
+
+- **Interactive Chat Stream**:
+  - Manager messages with structured tags (`👥 STAKEHOLDERS`, `📋 ISSUE DEFINITION`, `💡 SUGGESTED RESOLUTION`).
+  - Right-aligned agent bubbles with message timestamps.
+  - Working bottom chat input supporting user message sending with automatic replies.
 
 ### 9. Screen 8 — Leads Modal
-- Opens from Dashboard tasks or planner lead items.
-- Top bar with SLA countdown (`2h left`), status badge (`● OPEN`), and next/previous lead pagination dots (`1 of 5`).
+
+- Accessible directly from the Dashboard task list or planner lead items.
+
+- Top bar with SLA countdown (`2h left`), status badge (`● OPEN`), and pagination dots (`1 of 5`).
+
 - Customer profile (**Mukunda**, Ortho GRID · ₹8,490) with highlighted instruction: `Quote to be given to customer`.
+
 - Score indicators: **ICP (87%)** and **Lead Intent Score (91)**.
+
 - Collapsible Accordions:
   - `ICP FIT BREAKDOWN`
   - `HOW WE GOT HERE` (Walk-in timeline)
-  - `WHERE WE PICKED UP SIGNALS` (Financing Related, Quotation Demanded, Warranty Related).
-- Manager visibility alert: `CUMULATIVE MISSED: 2`.
+  - `WHERE WE PICKED UP SIGNALS` (Financing, Quotation, Warranty).
+
 - Direct call action buttons (`In-app call`, `Phone call`, `Practise call`).
 
 ---
 
----
+## 🎙️ The Working Calling Feature (PeerJS + WebRTC)
 
-## 🎙️ PeerJS + WebRTC In-App Voice Calling
+Per **Annexure-II Page 1 requirement**:
 
-This application includes a **real, fully working browser-to-browser voice calling feature** built with **PeerJS** and **WebRTC**. Two users (or two tabs/browser windows) can communicate in real time with two-way microphone audio and functional in-call controls.
+\> *\*"Your product demo must include the CALLING FEATURE working. Mock screens alone are not enough. Explain how you got calling working. Where possible, show human-to-human and AI-to-human calling."\**
 
 ### 1. How It Works
-- **PeerJS Cloud Signalling**: When the app opens, PeerJS connects to the free PeerJS public cloud signalling server (`0.peerjs.com`) to exchange WebRTC session descriptions (SDP offers/answers) and ICE candidates.
-- **Direct P2P WebRTC Audio**: Once signalling completes, audio streams directly peer-to-peer (P2P) between the two browsers using the browser's native `RTCPeerConnection` and `MediaDevices.getUserMedia()` API.
-- **No Backend Server Required**: All signalling is handled by the free PeerJS service; no local Express/Socket.IO backend or database is needed.
+
+- **PeerJS Cloud Signalling**: When the application loads, a PeerJS client connects to PeerJS's free cloud signalling server (`0.peerjs.com`) to exchange SDP offers/answers and ICE candidates.
+
+- **Two-Way Audio WebRTC**: Once connected, audio streams directly peer-to-peer between the two browsers using the browser's native `MediaDevices.getUserMedia({ audio: true })` and `RTCPeerConnection`.
+
+- **Zero Backend / Serverless**: No Express server, Socket.IO, database, or paid telephony subscription is needed.
+
+- **Audio Output**: Remote audio is routed through an HTML5 `Audio` element with automatic playback and graceful autoplay handling. Local audio feedback is prevented by never echoing the local stream through local speakers.
+
+### 2. Functional In-Call Controls
+
+- **Mute / Unmute**: Directly toggles `audioTrack.enabled = false / true` on the active microphone track.
+
+- **Hold / Resume**: Disables local microphone transmission, updates call status to `"On Hold"`, and visually alerts the user.
+
+- **End Call**: Closes the active media connection, stops all local microphone tracks to release hardware, clears duration timers, and logs the call record.
+
+- **Call Duration**: The timer starts only when the connection is established (not when initially dialing).
+
+- **Floating Call Bar**: Minimizing the active call window docks a floating bar at the bottom right. The agent can freely navigate between pages (`Dashboard`, `Calendar`, `Pulse`, `Leads`) while the voice call continues uninterrupted.
+
+- **Call Logging**: Completed, declined, or failed calls are automatically appended to in-memory state and displayed in **Recent Calls** with accurate timestamps and durations.
+
+### 3. Step-by-Step: How to Test Real Calls Between Two Browsers
+
+To test two-way voice communication on your computer:
+
+1\. **Open Session 1**:
+   - Open Chrome or Edge and go to `http://localhost:5173`.
+   - Click **Practise a Call** in the left sidebar.
+   - Look at the **Your Local Peer ID** card and click **Copy**.
+
+2\. **Open Session 2**:
+   - Open an **Incognito / Private window** or a second browser (e.g. Firefox) and visit `http://localhost:5173`.
+   - Navigate to **Practise a Call**.
+   - Note that Session 2 has its own unique Peer ID.
+
+3\. **Initiate the Call**:
+   - In Session 2, paste Session 1's Peer ID into the **Call Another User** input field.
+   - Click **Call**.
+   - Grant microphone permission when prompted by your browser.
+
+4\. **Accept the Call**:
+   - In Session 1, an **Incoming Voice Call** modal will ring displaying Session 2's Peer ID.
+   - Click **Accept**.
+   - Speak into your microphone: audio will stream between both browser sessions.
+   - Test **Mute**, **Hold**, and **Resume** buttons.
+   - Click **End Call** in either tab.
+   - Open **Recent Calls** to see the call logged with duration and `Completed` status.
+
+\> 💡 **Tip to Avoid Audio Feedback**: Because both browser tabs run on the same computer, testing with headphones or lowering speaker volume prevents acoustic feedback loops.
 
 ---
 
-### 2. How to Test Real Calls Between Two Browser Sessions
+## 🧱 Modular & Reusable Architecture
 
-To test two-way voice calling on a single computer:
+To ensure the codebase remains clean, maintainable, and beginner-friendly, shared logic has been modularized:
 
-1. **Start the Dev Server**:
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173`.
+- **`src/hooks/useCall.ts`**: Reusable calling hook encapsulating PeerJS lifecycle, incoming/outgoing call logic, microphone track management, and session call logging.
 
-2. **Session 1 (Caller or Receiver)**:
-   - In your main browser window, navigate to **Plan** → **Practise a call** in the sidebar.
-   - Look at the **Your Peer Identity** card. You will see an automatically generated Peer ID (e.g., `8d2f14ac-5e20-4a88-8123-3b1a29f8ce22`).
-   - Click the **Copy ID** button.
+- **`src/components/CallControls.tsx`**: Reusable Mute, Hold, and End Call controls supporting three variants:
+  - `circle`: Large circular action buttons for full modals (`ActiveCallModal`).
+  - `compact`: Minimal square buttons for docked floating bars (`FloatingCallBar`).
+  - `pill`: Labelled buttons for console testing (`PractiseCall`).
 
-3. **Session 2 (The Other Participant)**:
-   - Open a **second browser window** (e.g., Google Chrome Incognito, Microsoft Edge, or Firefox) and visit `http://localhost:5173`.
-   - Navigate to **Plan** → **Practise a call**. This second window will have its own unique Peer ID.
+- **`src/hooks/useCopyToClipboard.ts`**: Reusable custom hook providing temporary success indicators for copying Peer IDs.
 
-4. **Initiating the Call**:
-   - In Session 2, paste the Peer ID from Session 1 into the **Remote Peer ID** input box.
-   - Click **Call Peer**.
-   - Your browser will request **Microphone Permission** (`Allow`).
+- **`src/components/PeerStatusBadge.tsx`**: Color-coded connection status pill for PeerJS states (`initialising`, `ready`, `in-call`, `disconnected`).
 
-5. **Accepting the Call**:
-   - In Session 1, an **Incoming WebRTC Audio Call** modal will ring with the caller's Peer ID.
-   - Click **Accept Call** and grant microphone access if prompted.
-
-6. **In-Call Testing & Controls**:
-   - **Two-way Audio**: Speak into your microphone; audio plays through the other browser window's speaker/headphones.
-   - **Mute / Unmute**: Clicking Mute disables the local audio track (`track.enabled = false`); the other party cannot hear you until you unmute.
-   - **Hold / Resume**: Pauses sending audio and updates the call status to "On Hold".
-   - **Floating Call Bar**: Minimize the active call modal and navigate between pages (`Dashboard`, `Calendar`, `Pulse`); the call continues running uninterrupted with duration tracking.
-   - **End Call**: Hanging up closes the WebRTC media connection, releases all microphone tracks, stops the duration timer, and records the call into **Recent Calls**.
+- **`src/utils/formatters.ts`**: Shared utilities for formatting durations (`formatDuration(secs) => "MM:SS"`) and shortening Peer IDs.
 
 ---
 
-### 3. Microphone Permissions and HTTPS Requirements
+## 🚫 What Was Skipped & Intentional Design Decisions
 
-- **Localhost Exception**: WebRTC `getUserMedia()` operates over `http://localhost` without requiring an SSL certificate because browsers treat `localhost` as a secure origin.
-- **Production / Network Hosting**: If hosting on a local network IP (e.g., `http://192.168.x.x:5173`) or deploying to the web, browsers **strictly require HTTPS** to access the microphone.
-- **Audio Feedback**: When testing two browser windows on the same machine, use headphones or mute one tab to avoid acoustic feedback loops between your speaker and microphone.
+Per the ground rules in **Annexure-II Page 3 & Page 6**:
 
----
+- **No Backend / Database**: The project strictly adheres to *\*"Data: a local JSON file or small mock module. No backend."\** All state, leads, and call logs live in memory and typed mock data modules.
 
-### 4. Why This Calls Another Browser Rather Than a Mobile Number
+- **No Paid Cellular PSTN Gateway**: Calling cellular mobile numbers (+91...) requires a paid telecom carrier gateway (e.g. Twilio Voice, Exotel) and SIP trunks. The application uses WebRTC Peer IDs for browser-to-browser calling, and clearly informs the agent when a cellular number is clicked.
 
-- **WebRTC is Browser-to-Browser**: WebRTC provides encrypted, real-time peer-to-peer audio and video transmission between web browsers.
-- **PSTN Telephony Gateway Required for Real Phone Numbers**: Cellular phones and landlines operate on the Public Switched Telephone Network (PSTN). Calling an ordinary mobile number (+91 98450...) requires a paid telecom carrier gateway (such as Twilio Programmable Voice, Exotel, or AWS Chime) and telecom SIP trunks.
-- For in-app agent-to-customer or agent-to-peer communications, WebRTC provides instant, zero-cost, high-fidelity browser voice calling.
+- **STUN vs. TURN Relay**: Standard Google STUN (`stun:stun.l.google.com:19302`) is used for free NAT traversal. Paid TURN relays (required by restrictive corporate symmetric firewalls) were omitted to maintain a zero-cost demonstration.
+
+- **Placeholder UI Modals**: Secondary mock features such as Calendar share actions and Pulse search modal popups are kept as UI-only elements to keep the codebase focused, lightweight, and performant.
 
 ---
 
-### 5. Signalling & Network Limitations
+## 🤖 AI Tools Used & Attribution
 
-- **Free Public Signalling**: The app uses PeerJS's free community cloud server. It is ideal for demos, assignments, and testing. It does not provide enterprise SLAs.
-- **NAT / Firewall Traversal (STUN vs. TURN)**:
-  - The application includes public Google and Twilio STUN servers (`stun:stun.l.google.com:19302`) for direct P2P connection establishment across common residential and office NATs.
-  - Highly restrictive corporate symmetric NATs or enterprise firewalls may block direct UDP packets and require a TURN relay server (which is a paid bandwidth service not included in free setups).
-  - The application provides clear error notifications if a connection cannot be established or if a peer is unreachable.
+- **Google Antigravity IDE (Gemini 3.8 Flash High)**:
+  - **Usage**: I used **Antigravity** as an AI pair-programmer to boost development speed, scaffold initial component boilerplates, and assist with CSS layout alignment.
+  - **Personal Verification**: Rather than blindly accepting AI suggestions, I actively reviewed, tested, and manually refactored the code to fit my own architectural standards. When the initial calling implementation became overly complex with excessive hooks and refs, I restructured the code into clean, beginner-friendly components, extracted reusable utilities (`useCall`, `CallControls`, `useCopyToClipboard`), and verified every user interaction manually in the browser.
 
 ---
-
-## 🤖 AI Tools Used
-
-- **Google Antigravity IDE (Gemini 3.8 Flash High)**: Used for architecture planning, component scaffolding, design system implementation, and code generation.
-
